@@ -96,9 +96,9 @@ class MPC(object):
             vy,
             vz,
             0.5 * ( -wx*qx - wy*qy - wz*qz ),
-            0.5 * (  wx*qw + wz*qy - wy*qz ),
-            0.5 * (  wy*qw - wz*qx + wx*qz ),
-            0.5 * (  wz*qw + wy*qx - wx*qy ),
+            0.5 * (  wx*qw + wz*qy - wy*qz ), # (  wx*qw - wz*qy + wy*qz ),
+            0.5 * (  wy*qw - wz*qx + wx*qz ), # (  wy*qw + wz*qx - wx*qz ),
+            0.5 * (  wz*qw + wy*qx - wx*qy ), # (  wz*qw - wy*qx + wx*qy ),
             2 * ( qw*qy + qx*qz ) * thrust,
             2 * ( qy*qz - qw*qx ) * thrust, 
             (qw*qw - qx*qx -qy*qy + qz*qz) * thrust - self._gz

@@ -36,7 +36,14 @@ def run_mpc(env):
         update = False
         if t>= env.sim_T:
             update = True
-        # yield [info, t, update]
+    return [info, t, update]
+
+def my_run(env):
+    env.reset()
+    t = env.sim_dt
+    _, _, _, info = env.step()
+    return [info,t,True]
+
 
 def main():
     #
@@ -51,22 +58,23 @@ def main():
     
     #
     sim_visual = SimVisual(env)
-
+    data_info = my_run(env)
+    sim_visual.update(data_info)
     #
-    run_mpc(env)
+    #run_mpc(env)
     
-    # run_frame = partial(run_mpc, env)
-    # ani = animation.FuncAnimation(sim_visual.fig, sim_visual.update, frames=run_frame,
-    #         init_func=sim_visual.init_animate, interval=100, blit=True, repeat=False)
-    
+    #run_frame = partial(run_mpc, env)
+    #ani = animation.FuncAnimation(sim_visual.fig, sim_visual.update, frames=run_frame,
+    #        interval=100, blit=True, repeat=False)
+    # init_func=sim_visual.init_animate
     # #
     # if args.save_video:
     #     writer = animation.writers["ffmpeg"]
     #     writer = writer(fps=10, metadata=dict(artist='Me'), bitrate=1800)
     #     ani.save("MPC_0.mp4", writer=writer)
     
-    # plt.tight_layout()
-    # plt.show()
+    plt.tight_layout()
+    plt.show()
     
 if __name__ == "__main__":
     main()
