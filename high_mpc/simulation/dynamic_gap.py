@@ -96,7 +96,7 @@ class DynamicGap(object):
         quad_act, pred_traj = self.mpc.solve(ref_traj)
 
         # run the actual control command on the quadrotor
-        self.quad_state = self.quad.run(quad_act)
+        self.quad_state = self.quad.run(quad_act,self.t)
         # simulate one step pendulum
         self.pend_state = self.pend.run()
         

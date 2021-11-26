@@ -106,7 +106,9 @@ def run_wml(env, logger, save_dir, n_samples, max_iter, sigma0, beta0=3.0):
     act = pi()
     _, _, _, info = env.step(act)
     ts = np.arange(0, env.plan_T, env.plan_dt) 
-    plot_results(training_rewards, info, ts)        
+    #plot_results(training_rewards, info, ts)
+    
+    return act        
 
 def plot_results(training_rewards, info, ts):
     pred_quad_traj = info["pred_quad_traj"]

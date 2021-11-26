@@ -44,6 +44,10 @@ class Quadrotor_v0(object):
         self._state = np.zeros(shape=self.s_dim)
         self._state[kQuatW] = 1.0 # 
         #
+        #self._state[kPosX] = -1.0
+        #self._state[kPosY] = 0.0
+        #self._state[kPosZ] = 4.0
+        
         # initialize position, randomly
         self._state[kPosX] = np.random.uniform(
             low=self._xyz_dist[0, 0], high=self._xyz_dist[0, 1])
@@ -65,9 +69,10 @@ class Quadrotor_v0(object):
         self._state[kVelZ] = np.random.uniform(
             low=self._vxyz_dist[2, 0], high=self._vxyz_dist[2, 1])
         #
+        
         return self._state
 
-    def run(self, action):
+    def run(self, action, time):
         """
         Apply the control command on the quadrotor and transits the system to the next state
         """
@@ -77,17 +82,17 @@ class Quadrotor_v0(object):
         #
         X = self._state
         for i in range(M):
-            k1 = DT*self._f(X, action)
-            k2 = DT*self._f(X + 0.5*k1, action)
-            k3 = DT*self._f(X + 0.5*k2, action)
-            k4 = DT*self._f(X + k3, action)
+            k1 = DT*self._f(X, action,time)
+            k2 = DT*self._f(X + 0.5*k1, action,time)
+            k3 = DT*self._f(X + 0.5*k2, action,time)
+            k4 = DT*self._f(X + k3, action,time)
             #
             X = X + (k1 + 2.0*(k2 + k3) + k4)/6.0
         #
         self._state = X
         return self._state
 
-    def _f(self, state, action):
+    def _f(self, state, action, time):
         """
         System dynamics: ds = f(x, u)
         """
@@ -107,7 +112,18 @@ class Quadrotor_v0(object):
         dstate[kVelX] = 2 * ( qw*qy + qx*qz ) * thrust
         dstate[kVelY] = 2 * ( qy*qz - qw*qx ) * thrust
         # dstate[kVelZ] = (1 - 2*qx*qx - 2*qy*qy) * thrust - self._gz
+        #if time >= 0.2 and time<= 0.25:
+        #    dstate[kVelZ] = (qw*qw - qx*qx -qy*qy + qz*qz) * thrust - 12*self._gz
+        #    dstate[kVelX] = 2 * ( qw*qy + qx*qz ) * thrust + 50
+        #    dstate[kVelY] = 2 * ( qy*qz - qw*qx ) * thrust + 50
+        #else:    
         dstate[kVelZ] = (qw*qw - qx*qx -qy*qy + qz*qz) * thrust - self._gz
+
+        mass_error = 0.8
+
+        dstate[kVelX] *= mass_error
+        dstate[kVelY] *= mass_error
+        dstate[kVelZ] *= mass_error
 
         return dstate
 

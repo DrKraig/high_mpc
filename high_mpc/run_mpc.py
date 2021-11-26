@@ -36,13 +36,25 @@ def run_mpc(env):
         update = False
         if t>= env.sim_T:
             update = True
-    return [info, t, update]
+        yield [info, t, update]
 
-def my_run(env):
+def my_run(env,sim_visual):
     env.reset()
-    t = env.sim_dt
-    _, _, _, info = env.step()
-    return [info,t,True]
+    t, n = 0, 0
+    while t < env.sim_T:
+        t = env.sim_dt * n
+        t = env.sim_dt
+        print("here")
+        _, _, _, info = env.step()
+        #print(info)
+        print("there")
+        n += 1
+        data_info = [info,t,False]
+        sim_visual.update(data_info)
+        plt.pause(0.001)
+    plt.tight_layout()
+    plt.show()
+    
 
 
 def main():
@@ -58,15 +70,15 @@ def main():
     
     #
     sim_visual = SimVisual(env)
-    data_info = my_run(env)
-    sim_visual.update(data_info)
-    #
+    #my_run(env,sim_visual)
+    #sim_visual.update(data_info)
+    
     #run_mpc(env)
     
-    #run_frame = partial(run_mpc, env)
-    #ani = animation.FuncAnimation(sim_visual.fig, sim_visual.update, frames=run_frame,
-    #        interval=100, blit=True, repeat=False)
-    # init_func=sim_visual.init_animate
+    run_frame = partial(run_mpc, env)
+    ani = animation.FuncAnimation(sim_visual.fig, sim_visual.update, frames=run_frame,
+            init_func=sim_visual.init_animate, interval=100, blit=True, repeat=False)
+     
     # #
     # if args.save_video:
     #     writer = animation.writers["ffmpeg"]
